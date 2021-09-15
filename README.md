@@ -1,7 +1,7 @@
 # ACSE 4 Machine Learning Group Project
 
 ## X-Ray Classification
-
+Achieving fourth best classification accuracy on final leaderboard with an overall accuracy score of 98.75%.
 All information available here: https://www.kaggle.com/c/acse4-ml-2020
 
 Area Under the ROC Curve
@@ -37,4 +37,4 @@ If it is not possible to run the `prepare_dataset.sh` script, the data must be m
 
 Our repository contains two jupyter notebook folders, these detail our best two attempts at classifying the un-labeled dataset available from https://www.kaggle.com/c/acse4-ml-2020. We have tried to maintain a similar structure and content between these notebooks, furthermore this structure should act as a good starting point for future testing allowing users to easily trian models and tune for hyperparameters.
 
-The structure of these notebooks is enabled by the highly modular nature of our code. Many helper functions and wrappers have been encapsulated and well documented within their respective .py files which allow us to quickly change certain functionalities whilst keeping our jupyter notebooks clean and easily readable. This modularity has also allowed us to implement unit-testing more easily. All of our extra modules are located in the /utils subdirectory. For detailed documentation, please see [documentation/html/index.html](https://github.com/acse-2020/acse-4-x-ray-classification-convolution/blob/development/documentation/html/index.html), which can be opened in a web browser.
+The structure of these notebooks is enabled by the highly modular nature of our code. Many helper functions and wrappers have been encapsulated and well documented within their respective .py files which allow us to quickly change certain functionalities whilst keeping our jupyter notebooks clean and easily readable. This modularity has also allowed us to implement unit-testing more easily. All of our extra modules are located in the /utils subdirectory. For detailed documentation, please see [documentation/html/index.html](https://github.com/jamessoni/x-ray-ML-classification/blob/development/documentation/html/index.html), which can be opened in a web browser.
