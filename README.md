@@ -1,7 +1,7 @@
 # ACSE 4 Machine Learning Group Project
 
 ## X-Ray Classification
-Achieving fourth best classification accuracy on final leaderboard with an overall accuracy score of 98.75%.
+Achieving fourth best classification accuracy on final leaderboard with an overall accuracy score of 98.75%. </br>
 All information available here: https://www.kaggle.com/c/acse4-ml-2020
 
 Area Under the ROC Curve
