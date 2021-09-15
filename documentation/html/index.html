@@ -1,0 +1,1178 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Project 3: X-Ray Classification - Covid detection &#8212; X-Ray Classification - Covid detection  documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <div class="section" id="project-3-x-ray-classification-covid-detection">
+<h1>Project 3: X-Ray Classification - Covid detection<a class="headerlink" href="#project-3-x-ray-classification-covid-detection" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="synopsis">
+<h2>Synopsis:<a class="headerlink" href="#synopsis" title="Permalink to this headline">¶</a></h2>
+<p>The goal of this competition is to classify a dataset of X-Ray lung images into 4 classes.</p>
+<p>The 4 classes are:</p>
+<ul class="simple">
+<li><p>Covid-19: lung images of Covid-19 patients.</p></li>
+<li><p>Lung opacity (ground-glass opacity): images of lungs showing areas of hazy opacification or increased attenuation (CT) due to air displacement by fluid, airway collapse, fibrosis, or a neoplastic process.</p></li>
+<li><p>Pneumonia: lung images of viral pneumonia patients.</p></li>
+<li><p>Normal: lung images of healthy patients.</p></li>
+</ul>
+<p>More information can be found in the following link: <a class="reference external" href="https://www.kaggle.com/c/acse4-ml-2020">https://www.kaggle.com/c/acse4-ml-2020</a></p>
+</div>
+</div>
+<div class="section" id="module-utils">
+<span id="function-api"></span><h1>Function API<a class="headerlink" href="#module-utils" title="Permalink to this headline">¶</a></h1>
+<p>Python helper functions.</p>
+<dl class="py class">
+<dt id="utils.AlexNet">
+<em class="property">class </em><code class="sig-prename descclassname">utils.</code><code class="sig-name descname">AlexNet</code><a class="headerlink" href="#utils.AlexNet" title="Permalink to this definition">¶</a></dt>
+<dd><p>Our first more “succesful” network, slightly modified AlexNet
+that accepts images in with 1 channel (i.e. grayscale).</p>
+<dl class="py attribute">
+<dt id="utils.AlexNet.c">
+<code class="sig-name descname">c</code><a class="headerlink" href="#utils.AlexNet.c" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Applies a 2D convolution over an input signal composed</dt><dd><p>of several input planes</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>torch.nn.modules.conv.Conv2d</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="utils.AlexNet.s">
+<code class="sig-name descname">s</code><a class="headerlink" href="#utils.AlexNet.s" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Applies a 2D max pooling over an input signal composed</dt><dd><p>of several input planes</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>torch.nn.modules.pooling.MaxPool2d</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="utils.AlexNet.avgpool">
+<code class="sig-name descname">avgpool</code><a class="headerlink" href="#utils.AlexNet.avgpool" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Applies a 2D adaptive average pooling over an input signal composed</dt><dd><p>of several input planes</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>torch.nn.modules.pooling.AdaptiveAvgPool2d</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="utils.AlexNet.d">
+<code class="sig-name descname">d</code><a class="headerlink" href="#utils.AlexNet.d" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Randomly zeroes some elements of the input tensor during training</dt><dd><p>using a Bernoulli distribution</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>torch.nn.modules.dropout.Dropout</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="utils.AlexNet.f">
+<code class="sig-name descname">f</code><a class="headerlink" href="#utils.AlexNet.f" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies a linear transformation to the incoming data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>torch.nn.modules.linear.Linear</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="utils.AlexNet.output">
+<code class="sig-name descname">output</code><a class="headerlink" href="#utils.AlexNet.output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies a linear transformation with the required output channels</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>torch.nn.modules.linear.Linear</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="utils.AlexNet.act">
+<code class="sig-name descname">act</code><a class="headerlink" href="#utils.AlexNet.act" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies a rectified linear unit function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>torch.nn.modules.activation.ReLU</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="utils.AlexNet.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.AlexNet.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forward pass using the layers and activations of the class</p>
+</dd></dl>
+
+<p>Initializes internal Module state, shared by both nn.Module and ScriptModule.</p>
+<dl class="py method">
+<dt id="id0">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="headerlink" href="#id0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forward pass using the layers and activations of the class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>tensor</em>) – <dl class="simple">
+<dt>flattened or reshaped tensor matching the input dimensions</dt><dd><p>required for the fully connect block of neural network</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Forwarded tensor</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="utils.DataLoader">
+<em class="property">class </em><code class="sig-prename descclassname">utils.</code><code class="sig-name descname">DataLoader</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dataset</span><span class="p">:</span> <span class="n">torch.utils.data.dataset.Dataset<span class="p">[</span>T_co<span class="p">]</span></span></em>, <em class="sig-param"><span class="n">batch_size</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>int<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">shuffle</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">sampler</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>torch.utils.data.sampler.Sampler<span class="p">[</span>int<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">batch_sampler</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>torch.utils.data.sampler.Sampler<span class="p">[</span>Sequence<span class="p">[</span>int<span class="p">]</span><span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">num_workers</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">0</span></em>, <em class="sig-param"><span class="n">collate_fn</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Callable<span class="p">[</span><span class="p">[</span>List<span class="p">[</span>T<span class="p">]</span><span class="p">]</span><span class="p">, </span>Any<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">pin_memory</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">drop_last</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">timeout</span><span class="p">:</span> <span class="n">float</span> <span class="o">=</span> <span class="default_value">0</span></em>, <em class="sig-param"><span class="n">worker_init_fn</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>Callable<span class="p">[</span><span class="p">[</span>int<span class="p">]</span><span class="p">, </span>None<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">multiprocessing_context</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">generator</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">*</span></em>, <em class="sig-param"><span class="n">prefetch_factor</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">2</span></em>, <em class="sig-param"><span class="n">persistent_workers</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.DataLoader" title="Permalink to this definition">¶</a></dt>
+<dd><p>Data loader. Combines a dataset and a sampler, and provides an iterable over
+the given dataset.</p>
+<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">DataLoader</span></code> supports both map-style and
+iterable-style datasets with single- or multi-process loading, customizing
+loading order and optional automatic batching (collation) and memory pinning.</p>
+<p>See <code class="xref py py-mod docutils literal notranslate"><span class="pre">torch.utils.data</span></code> documentation page for more details.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dataset</strong> (<em>Dataset</em>) – dataset from which to load the data.</p></li>
+<li><p><strong>batch_size</strong> (<em>int</em><em>, </em><em>optional</em>) – how many samples per batch to load
+(default: <code class="docutils literal notranslate"><span class="pre">1</span></code>).</p></li>
+<li><p><strong>shuffle</strong> (<em>bool</em><em>, </em><em>optional</em>) – set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to have the data reshuffled
+at every epoch (default: <code class="docutils literal notranslate"><span class="pre">False</span></code>).</p></li>
+<li><p><strong>sampler</strong> (<em>Sampler</em><em> or </em><em>Iterable</em><em>, </em><em>optional</em>) – defines the strategy to draw
+samples from the dataset. Can be any <code class="docutils literal notranslate"><span class="pre">Iterable</span></code> with <code class="docutils literal notranslate"><span class="pre">__len__</span></code>
+implemented. If specified, <code class="xref py py-attr docutils literal notranslate"><span class="pre">shuffle</span></code> must not be specified.</p></li>
+<li><p><strong>batch_sampler</strong> (<em>Sampler</em><em> or </em><em>Iterable</em><em>, </em><em>optional</em>) – like <code class="xref py py-attr docutils literal notranslate"><span class="pre">sampler</span></code>, but
+returns a batch of indices at a time. Mutually exclusive with
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">batch_size</span></code>, <code class="xref py py-attr docutils literal notranslate"><span class="pre">shuffle</span></code>, <code class="xref py py-attr docutils literal notranslate"><span class="pre">sampler</span></code>,
+and <code class="xref py py-attr docutils literal notranslate"><span class="pre">drop_last</span></code>.</p></li>
+<li><p><strong>num_workers</strong> (<em>int</em><em>, </em><em>optional</em>) – how many subprocesses to use for data
+loading. <code class="docutils literal notranslate"><span class="pre">0</span></code> means that the data will be loaded in the main process.
+(default: <code class="docutils literal notranslate"><span class="pre">0</span></code>)</p></li>
+<li><p><strong>collate_fn</strong> (<em>callable</em><em>, </em><em>optional</em>) – merges a list of samples to form a
+mini-batch of Tensor(s).  Used when using batched loading from a
+map-style dataset.</p></li>
+<li><p><strong>pin_memory</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, the data loader will copy Tensors
+into CUDA pinned memory before returning them.  If your data elements
+are a custom type, or your <code class="xref py py-attr docutils literal notranslate"><span class="pre">collate_fn</span></code> returns a batch that is a custom type,
+see the example below.</p></li>
+<li><p><strong>drop_last</strong> (<em>bool</em><em>, </em><em>optional</em>) – set to <code class="docutils literal notranslate"><span class="pre">True</span></code> to drop the last incomplete batch,
+if the dataset size is not divisible by the batch size. If <code class="docutils literal notranslate"><span class="pre">False</span></code> and
+the size of dataset is not divisible by the batch size, then the last batch
+will be smaller. (default: <code class="docutils literal notranslate"><span class="pre">False</span></code>)</p></li>
+<li><p><strong>timeout</strong> (<em>numeric</em><em>, </em><em>optional</em>) – if positive, the timeout value for collecting a batch
+from workers. Should always be non-negative. (default: <code class="docutils literal notranslate"><span class="pre">0</span></code>)</p></li>
+<li><p><strong>worker_init_fn</strong> (<em>callable</em><em>, </em><em>optional</em>) – If not <code class="docutils literal notranslate"><span class="pre">None</span></code>, this will be called on each
+worker subprocess with the worker id (an int in <code class="docutils literal notranslate"><span class="pre">[0,</span> <span class="pre">num_workers</span> <span class="pre">-</span> <span class="pre">1]</span></code>) as
+input, after seeding and before data loading. (default: <code class="docutils literal notranslate"><span class="pre">None</span></code>)</p></li>
+<li><p><strong>prefetch_factor</strong> (<em>int</em><em>, </em><em>optional</em><em>, </em><em>keyword-only arg</em>) – Number of samples loaded
+in advance by each worker. <code class="docutils literal notranslate"><span class="pre">2</span></code> means there will be a total of
+2 * num_workers samples prefetched across all workers. (default: <code class="docutils literal notranslate"><span class="pre">2</span></code>)</p></li>
+<li><p><strong>persistent_workers</strong> (<em>bool</em><em>, </em><em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, the data loader will not shutdown
+the worker processes after a dataset has been consumed once. This allows to
+maintain the workers <cite>Dataset</cite> instances alive. (default: <code class="docutils literal notranslate"><span class="pre">False</span></code>)</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If the <code class="docutils literal notranslate"><span class="pre">spawn</span></code> start method is used, <code class="xref py py-attr docutils literal notranslate"><span class="pre">worker_init_fn</span></code>
+cannot be an unpicklable object, e.g., a lambda function. See
+<span class="xref std std-ref">multiprocessing-best-practices</span> on more details related
+to multiprocessing in PyTorch.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><code class="docutils literal notranslate"><span class="pre">len(dataloader)</span></code> heuristic is based on the length of the sampler used.
+When <code class="xref py py-attr docutils literal notranslate"><span class="pre">dataset</span></code> is an <code class="xref py py-class docutils literal notranslate"><span class="pre">IterableDataset</span></code>,
+it instead returns an estimate based on <code class="docutils literal notranslate"><span class="pre">len(dataset)</span> <span class="pre">/</span> <span class="pre">batch_size</span></code>, with proper
+rounding depending on <code class="xref py py-attr docutils literal notranslate"><span class="pre">drop_last</span></code>, regardless of multi-process loading
+configurations. This represents the best guess PyTorch can make because PyTorch
+trusts user <code class="xref py py-attr docutils literal notranslate"><span class="pre">dataset</span></code> code in correctly handling multi-process
+loading to avoid duplicate data.</p>
+<p>However, if sharding results in multiple workers having incomplete last batches,
+this estimate can still be inaccurate, because (1) an otherwise complete batch can
+be broken into multiple ones and (2) more than one batch worth of samples can be
+dropped when <code class="xref py py-attr docutils literal notranslate"><span class="pre">drop_last</span></code> is set. Unfortunately, PyTorch can not detect such
+cases in general.</p>
+<p>See <a href="#id11"><span class="problematic" id="id12">`Dataset Types`_</span></a> for more details on these two types of datasets and how
+<code class="xref py py-class docutils literal notranslate"><span class="pre">IterableDataset</span></code> interacts with
+<a href="#id13"><span class="problematic" id="id14">`Multi-process data loading`_</span></a>.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>See <span class="xref std std-ref">reproducibility</span>, and <span class="xref std std-ref">dataloader-workers-random-seed</span>, and
+<span class="xref std std-ref">data-loading-randomness</span> notes for random seed related questions.</p>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt id="utils.LeNet5">
+<em class="property">class </em><code class="sig-prename descclassname">utils.</code><code class="sig-name descname">LeNet5</code><a class="headerlink" href="#utils.LeNet5" title="Permalink to this definition">¶</a></dt>
+<dd><p>Custom class defining the LeNet-5 architecture.
+Implements two functions, __init__ constructor function
+defining convolution and down-sampling operations and
+the forward function.</p>
+<dl class="py attribute">
+<dt id="utils.LeNet5.c">
+<code class="sig-name descname">c</code><a class="headerlink" href="#utils.LeNet5.c" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Applies a 2D convolution over an input signal composed</dt><dd><p>of several input planes</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>torch.nn.modules.conv.Conv2d</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="utils.LeNet5.s">
+<code class="sig-name descname">s</code><a class="headerlink" href="#utils.LeNet5.s" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="simple">
+<dt>Applies a 2D max pooling over an input signal composed</dt><dd><p>of several input planes</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>torch.nn.modules.pooling.MaxPool2d</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="utils.LeNet5.f">
+<code class="sig-name descname">f</code><a class="headerlink" href="#utils.LeNet5.f" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies a linear transformation to the incoming data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>torch.nn.modules.linear.Linear</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="utils.LeNet5.output">
+<code class="sig-name descname">output</code><a class="headerlink" href="#utils.LeNet5.output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies a linear transformation with the required output channels</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>torch.nn.modules.linear.Linear</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="utils.LeNet5.act">
+<code class="sig-name descname">act</code><a class="headerlink" href="#utils.LeNet5.act" title="Permalink to this definition">¶</a></dt>
+<dd><p>Applies a rectified linear unit function</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>torch.nn.modules.activation.ReLU</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="utils.LeNet5.forward">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.LeNet5.forward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forward pass using the layers and activations of the class</p>
+</dd></dl>
+
+<p>Initializes internal Module state, shared by both nn.Module and ScriptModule.</p>
+<dl class="py method">
+<dt id="id1">
+<code class="sig-name descname">forward</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x</span></em><span class="sig-paren">)</span><a class="headerlink" href="#id1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Forward pass using the layers and activations of the class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>tensor</em>) – <dl class="simple">
+<dt>flattened or reshaped tensor matching the input dimensions</dt><dd><p>required for the fully connect block of neural network</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Forwarded tensor</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tensor</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="utils.PlotLosses">
+<em class="property">class </em><code class="sig-prename descclassname">utils.</code><code class="sig-name descname">PlotLosses</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">outputs</span><span class="p">:</span> <span class="n">List<span class="p">[</span>Union<span class="p">[</span>Type<span class="p">[</span>BO<span class="p">]</span><span class="p">, </span>str<span class="p">]</span><span class="p">]</span></span> <span class="o">=</span> <span class="default_value">['MatplotlibPlot', 'ExtremaPrinter']</span></em>, <em class="sig-param"><span class="n">mode</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'notebook'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.PlotLosses" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class collect metrics from the training engine and send it to plugins, when send is called</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>outputs</strong> – list of output modules: objects inheriting from BaseOutput
+or strings for livelossplot built-in output methods with default parameters</p></li>
+<li><p><strong>mode</strong> – Options: ‘notebook’ or ‘script’ - some of outputs need to change some behaviors,
+depending on the working environment</p></li>
+<li><p><strong>**kwargs</strong> – key-arguments which are passed to MainLogger constructor</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="utils.PlotLosses.draw">
+<code class="sig-name descname">draw</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#utils.PlotLosses.draw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Send method substitute from old livelossplot api</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="utils.PlotLosses.reset_outputs">
+<code class="sig-name descname">reset_outputs</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; livelossplot.plot_losses.PlotLosses<a class="headerlink" href="#utils.PlotLosses.reset_outputs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resets all outputs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Plotlosses object (so it works for chaining)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="utils.PlotLosses.send">
+<code class="sig-name descname">send</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#utils.PlotLosses.send" title="Permalink to this definition">¶</a></dt>
+<dd><p>Method will send logs to every output class</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="utils.PlotLosses.to_bokeh">
+<code class="sig-name descname">to_bokeh</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; livelossplot.plot_losses.PlotLosses<a class="headerlink" href="#utils.PlotLosses.to_bokeh" title="Permalink to this definition">¶</a></dt>
+<dd><p>Appends outputs.BokehPlot output, with specified parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> – keyword arguments for BokehPlot</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Plotlosses object (so it works for chaining)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="utils.PlotLosses.to_extrema_printer">
+<code class="sig-name descname">to_extrema_printer</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; livelossplot.plot_losses.PlotLosses<a class="headerlink" href="#utils.PlotLosses.to_extrema_printer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Appends outputs.ExtremaPrinter output, with specified parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> – keyword arguments for ExtremaPrinter</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Plotlosses object (so it works for chaining)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="utils.PlotLosses.to_matplotlib">
+<code class="sig-name descname">to_matplotlib</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; livelossplot.plot_losses.PlotLosses<a class="headerlink" href="#utils.PlotLosses.to_matplotlib" title="Permalink to this definition">¶</a></dt>
+<dd><p>Appends outputs.MatplotlibPlot output, with specified parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> – keyword arguments for MatplotlibPlot</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Plotlosses object (so it works for chaining)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="utils.PlotLosses.to_neptune">
+<code class="sig-name descname">to_neptune</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; livelossplot.plot_losses.PlotLosses<a class="headerlink" href="#utils.PlotLosses.to_neptune" title="Permalink to this definition">¶</a></dt>
+<dd><p>Appends outputs.NeptuneLogger output, with specified parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> – keyword arguments for NeptuneLogger</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Plotlosses object (so it works for chaining)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="utils.PlotLosses.to_tensorboard">
+<code class="sig-name descname">to_tensorboard</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; livelossplot.plot_losses.PlotLosses<a class="headerlink" href="#utils.PlotLosses.to_tensorboard" title="Permalink to this definition">¶</a></dt>
+<dd><p>Appends outputs.TensorboardLogger output, with specified parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> – keyword arguments for TensorboardLogger</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Plotlosses object (so it works for chaining)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="utils.PlotLosses.to_tensorboard_tf">
+<code class="sig-name descname">to_tensorboard_tf</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span> &#x2192; livelossplot.plot_losses.PlotLosses<a class="headerlink" href="#utils.PlotLosses.to_tensorboard_tf" title="Permalink to this definition">¶</a></dt>
+<dd><p>Appends outputs.TensorboardTFLogger output, with specified parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>**kwargs</strong> – keyword arguments for TensorboardTFLogger</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Plotlosses object (so it works for chaining)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="utils.PlotLosses.update">
+<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.PlotLosses.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>update logs with arguments that will be passed to main logger</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="utils.StratifiedShuffleSplit">
+<em class="property">class </em><code class="sig-prename descclassname">utils.</code><code class="sig-name descname">StratifiedShuffleSplit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">n_splits</span><span class="o">=</span><span class="default_value">10</span></em>, <em class="sig-param"><span class="n">test_size</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">train_size</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">random_state</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.StratifiedShuffleSplit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stratified ShuffleSplit cross-validator</p>
+<p>Provides train/test indices to split data in train/test sets.</p>
+<p>This cross-validation object is a merge of StratifiedKFold and
+ShuffleSplit, which returns stratified randomized folds. The folds
+are made by preserving the percentage of samples for each class.</p>
+<p>Note: like the ShuffleSplit strategy, stratified random splits
+do not guarantee that all folds will be different, although this is
+still very likely for sizeable datasets.</p>
+<p>Read more in the <span class="xref std std-ref">User Guide</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>n_splits</strong> (<em>int</em><em>, </em><em>default 10</em>) – Number of re-shuffling &amp; splitting iterations.</p></li>
+<li><p><strong>test_size</strong> (<em>float</em><em>, </em><em>int</em><em>, </em><em>None</em><em>, </em><em>optional</em><em> (</em><em>default=None</em><em>)</em>) – If float, should be between 0.0 and 1.0 and represent the proportion
+of the dataset to include in the test split. If int, represents the
+absolute number of test samples. If None, the value is set to the
+complement of the train size. If <code class="docutils literal notranslate"><span class="pre">train_size</span></code> is also None, it will
+be set to 0.1.</p></li>
+<li><p><strong>train_size</strong> (<em>float</em><em>, </em><em>int</em><em>, or </em><em>None</em><em>, </em><em>default is None</em>) – If float, should be between 0.0 and 1.0 and represent the
+proportion of the dataset to include in the train split. If
+int, represents the absolute number of train samples. If None,
+the value is automatically set to the complement of the test size.</p></li>
+<li><p><strong>random_state</strong> (<em>int</em><em>, </em><em>RandomState instance</em><em> or </em><em>None</em><em>, </em><em>optional</em><em> (</em><em>default=None</em><em>)</em>) – If int, random_state is the seed used by the random number generator;
+If RandomState instance, random_state is the random number generator;
+If None, the random number generator is the RandomState instance used
+by <cite>np.random</cite>.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">StratifiedShuffleSplit</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sss</span> <span class="o">=</span> <span class="n">StratifiedShuffleSplit</span><span class="p">(</span><span class="n">n_splits</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sss</span><span class="o">.</span><span class="n">get_n_splits</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="go">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">sss</span><span class="p">)</span>
+<span class="go">StratifiedShuffleSplit(n_splits=5, random_state=0, ...)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">train_index</span><span class="p">,</span> <span class="n">test_index</span> <span class="ow">in</span> <span class="n">sss</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;TRAIN:&quot;</span><span class="p">,</span> <span class="n">train_index</span><span class="p">,</span> <span class="s2">&quot;TEST:&quot;</span><span class="p">,</span> <span class="n">test_index</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span> <span class="o">=</span> <span class="n">X</span><span class="p">[</span><span class="n">train_index</span><span class="p">],</span> <span class="n">X</span><span class="p">[</span><span class="n">test_index</span><span class="p">]</span>
+<span class="gp">... </span>    <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="n">train_index</span><span class="p">],</span> <span class="n">y</span><span class="p">[</span><span class="n">test_index</span><span class="p">]</span>
+<span class="go">TRAIN: [5 2 3] TEST: [4 1 0]</span>
+<span class="go">TRAIN: [5 1 4] TEST: [0 2 3]</span>
+<span class="go">TRAIN: [5 0 2] TEST: [4 3 1]</span>
+<span class="go">TRAIN: [4 1 0] TEST: [2 3 5]</span>
+<span class="go">TRAIN: [0 5 1] TEST: [3 4 2]</span>
+</pre></div>
+</div>
+<dl class="py method">
+<dt id="utils.StratifiedShuffleSplit.split">
+<code class="sig-name descname">split</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">y</span></em>, <em class="sig-param"><span class="n">groups</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.StratifiedShuffleSplit.split" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generate indices to split data into training and test set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>X</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n_samples</em><em>, </em><em>n_features</em><em>)</em>) – <p>Training data, where n_samples is the number of samples
+and n_features is the number of features.</p>
+<p>Note that providing <code class="docutils literal notranslate"><span class="pre">y</span></code> is sufficient to generate the splits and
+hence <code class="docutils literal notranslate"><span class="pre">np.zeros(n_samples)</span></code> may be used as a placeholder for
+<code class="docutils literal notranslate"><span class="pre">X</span></code> instead of actual training data.</p>
+</p></li>
+<li><p><strong>y</strong> (<em>array-like</em><em>, </em><em>shape</em><em> (</em><em>n_samples</em><em>,</em><em>) or </em><em>(</em><em>n_samples</em><em>, </em><em>n_labels</em><em>)</em>) – The target variable for supervised learning problems.
+Stratification is done based on the y labels.</p></li>
+<li><p><strong>groups</strong> (<em>object</em>) – Always ignored, exists for compatibility.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>train</strong> (<em>ndarray</em>) – The training set indices for that split.</p></li>
+<li><p><strong>test</strong> (<em>ndarray</em>) – The testing set indices for that split.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Randomized CV splitters may return different results for each call of
+split. You can make the results identical by setting <code class="docutils literal notranslate"><span class="pre">random_state</span></code>
+to an integer.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="utils.get_data">
+<code class="sig-prename descclassname">utils.</code><code class="sig-name descname">get_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filepath</span></em>, <em class="sig-param"><span class="n">transform</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">rgb</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.get_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read in data from the given folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> (<em>str</em>) – Path for the file e.g.: F’string/containing/filepath’</p></li>
+<li><p><strong>transform</strong> (<em>callable</em>) – A function which tranforms the data to the required format</p></li>
+<li><p><strong>rgb</strong> (<em>bool</em>) – Image type for different channel types</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Required data after read in</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>torchvision.datasets.folder.ImageFolder</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="utils.get_data_augmented">
+<code class="sig-prename descclassname">utils.</code><code class="sig-name descname">get_data_augmented</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filepath</span></em>, <em class="sig-param"><span class="n">filepath_test</span></em>, <em class="sig-param"><span class="n">test_size</span></em>, <em class="sig-param"><span class="n">mean</span><span class="o">=</span><span class="default_value">(0.5, 0.5, 0.5)</span></em>, <em class="sig-param"><span class="n">std</span><span class="o">=</span><span class="default_value">(0.5, 0.5, 0.5)</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.get_data_augmented" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the datasets for train and validation with data augmentation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> (<em>str</em>) – Path for the file e.g.: F’string/containing/filepath’</p></li>
+<li><p><strong>filepath_test</strong> (<em>str</em>) – Path for the test file e.g.: F’string/containing/filepath/test’</p></li>
+<li><p><strong>test_size</strong> (<em>int</em>) – Size of test data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>3 element-long tuple containing training dataset, validation dataset</dt><dd><p>and testing dataset with data augmentation</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="utils.get_predictions">
+<code class="sig-prename descclassname">utils.</code><code class="sig-name descname">get_predictions</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">X</span></em>, <em class="sig-param"><span class="n">device</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.get_predictions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get predictions on a set of data X.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>torchvision.models.given_model</em>) – The model which we want to use for the predictions</p></li>
+<li><p><strong>X</strong> (<em>__main__.CustomDataSet</em>) – The data for which we want the prediction</p></li>
+<li><p><strong>device</strong> (<em>str</em>) – send data/tasks to GPU or CPU</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Predictions for the values</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="utils.get_train_valid_data">
+<code class="sig-prename descclassname">utils.</code><code class="sig-name descname">get_train_valid_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filepath</span></em>, <em class="sig-param"><span class="n">filepath_test</span></em>, <em class="sig-param"><span class="n">test_size</span></em>, <em class="sig-param"><span class="n">mean</span><span class="o">=</span><span class="default_value">(0.5, 0.5, 0.5)</span></em>, <em class="sig-param"><span class="n">std</span><span class="o">=</span><span class="default_value">(0.5, 0.5, 0.5)</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.get_train_valid_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the datasets for train and validation without data augmentation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> (<em>str</em>) – Path for the file e.g.: F’string/containing/filepath’</p></li>
+<li><p><strong>filepath_test</strong> (<em>str</em>) – Path for the test file e.g.: F’string/containing/filepath/test’</p></li>
+<li><p><strong>test_size</strong> (<em>int</em>) – Size of test data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>3 element-long tuple containing training dataset, validation dataset</dt><dd><p>and testing dataset</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="utils.initialise_model">
+<code class="sig-prename descclassname">utils.</code><code class="sig-name descname">initialise_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config</span></em>, <em class="sig-param"><span class="n">seed</span></em>, <em class="sig-param"><span class="n">device</span></em>, <em class="sig-param"><span class="n">trainset</span></em>, <em class="sig-param"><span class="n">validset</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.initialise_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets model parameters. parapm[“parameter”] are parameters that
+can be varied through the grid search</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> (<em>wandb.sdk.wandb_config.Config</em>) – Gives access to hyperparameter search value set</p></li>
+<li><p><strong>seed</strong> (<em>int</em>) – Seed for the random generators to allow repeatability</p></li>
+<li><p><strong>trainset</strong> (<em>torch.utils.data.dataset.Subset</em>) – Training dataset</p></li>
+<li><p><strong>validset</strong> (<em>torch.utils.data.dataset.Subset</em>) – Validation dataset</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>model</strong> (<em>torchvision.models.alexnet.AlexNet</em>) – Convolutional Neural network architecture</p></li>
+<li><p><strong>optimizer</strong> (<em>torch.optim.sgd.SGD</em>) – method to reduce losses</p></li>
+<li><p><strong>criterion</strong> (<em>torch.nn.modules.loss.CrossEntropyLoss</em>) – criterion for which we are optimising, calculates loss.</p></li>
+<li><p><strong>train_loader</strong> (<em>torch.utils.data.dataloader.DataLoader</em>) – data loader carrying our training data and labels</p></li>
+<li><p><strong>validation_loader</strong> (<em>torch.utils.data.dataloader.DataLoader</em>) – validation lodaer carrying our validation data and labels</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="utils.initialize_data_norm">
+<code class="sig-prename descclassname">utils.</code><code class="sig-name descname">initialize_data_norm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filepath</span></em>, <em class="sig-param"><span class="n">filepath_test</span></em>, <em class="sig-param"><span class="n">mean</span><span class="o">=</span><span class="default_value">(0.5, 0.5, 0.5)</span></em>, <em class="sig-param"><span class="n">std</span><span class="o">=</span><span class="default_value">(0.5, 0.5, 0.5)</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.initialize_data_norm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load three whole datasets(train, validate and test)
+and apply normalization on test dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> (<em>str</em>) – Path for the file e.g.: F’string/containing/filepath’</p></li>
+<li><p><strong>filepath_test</strong> (<em>str</em>) – Path for the test file e.g.: F’string/containing/filepath/test’</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>3 element-long tuple containing training dataset, validation dataset</dt><dd><p>and testing dataset</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="utils.roc_auc_score">
+<code class="sig-prename descclassname">utils.</code><code class="sig-name descname">roc_auc_score</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">y_true</span></em>, <em class="sig-param"><span class="n">y_score</span></em>, <em class="sig-param"><span class="n">average</span><span class="o">=</span><span class="default_value">'macro'</span></em>, <em class="sig-param"><span class="n">sample_weight</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_fpr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">multi_class</span><span class="o">=</span><span class="default_value">'raise'</span></em>, <em class="sig-param"><span class="n">labels</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.roc_auc_score" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute Area Under the Receiver Operating Characteristic Curve (ROC AUC)
+from prediction scores.</p>
+<p>Note: this implementation can be used with binary, multiclass and
+multilabel classification, but some restrictions apply (see Parameters).</p>
+<p>Read more in the <span class="xref std std-ref">User Guide</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y_true</strong> (<em>array-like of shape</em><em> (</em><em>n_samples</em><em>,</em><em>) or </em><em>(</em><em>n_samples</em><em>, </em><em>n_classes</em><em>)</em>) – True labels or binary label indicators. The binary and multiclass cases
+expect labels with shape (n_samples,) while the multilabel case expects
+binary label indicators with shape (n_samples, n_classes).</p></li>
+<li><p><strong>y_score</strong> (<em>array-like of shape</em><em> (</em><em>n_samples</em><em>,</em><em>) or </em><em>(</em><em>n_samples</em><em>, </em><em>n_classes</em><em>)</em>) – Target scores. In the binary and multilabel cases, these can be either
+probability estimates or non-thresholded decision values (as returned
+by <cite>decision_function</cite> on some classifiers). In the multiclass case,
+these must be probability estimates which sum to 1. The binary
+case expects a shape (n_samples,), and the scores must be the scores of
+the class with the greater label. The multiclass and multilabel
+cases expect a shape (n_samples, n_classes). In the multiclass case,
+the order of the class scores must correspond to the order of
+<code class="docutils literal notranslate"><span class="pre">labels</span></code>, if provided, or else to the numerical or lexicographical
+order of the labels in <code class="docutils literal notranslate"><span class="pre">y_true</span></code>.</p></li>
+<li><p><strong>average</strong> (<em>{'micro'</em><em>, </em><em>'macro'</em><em>, </em><em>'samples'</em><em>, </em><em>'weighted'}</em><em> or </em><em>None</em><em>,             </em><em>default='macro'</em>) – <p>If <code class="docutils literal notranslate"><span class="pre">None</span></code>, the scores for each class are returned. Otherwise,
+this determines the type of averaging performed on the data:
+Note: multiclass ROC AUC currently only handles the ‘macro’ and
+‘weighted’ averages.</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">'micro'</span></code>:</dt><dd><p>Calculate metrics globally by considering each element of the label
+indicator matrix as a label.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">'macro'</span></code>:</dt><dd><p>Calculate metrics for each label, and find their unweighted
+mean.  This does not take label imbalance into account.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">'weighted'</span></code>:</dt><dd><p>Calculate metrics for each label, and find their average, weighted
+by support (the number of true instances for each label).</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">'samples'</span></code>:</dt><dd><p>Calculate metrics for each instance, and find their average.</p>
+</dd>
+</dl>
+<p>Will be ignored when <code class="docutils literal notranslate"><span class="pre">y_true</span></code> is binary.</p>
+</p></li>
+<li><p><strong>sample_weight</strong> (<em>array-like of shape</em><em> (</em><em>n_samples</em><em>,</em><em>)</em><em>, </em><em>default=None</em>) – Sample weights.</p></li>
+<li><p><strong>max_fpr</strong> (<em>float &gt; 0 and &lt;= 1</em><em>, </em><em>default=None</em>) – If not <code class="docutils literal notranslate"><span class="pre">None</span></code>, the standardized partial AUC <a class="footnote-reference brackets" href="#id7" id="id2">2</a> over the range
+[0, max_fpr] is returned. For the multiclass case, <code class="docutils literal notranslate"><span class="pre">max_fpr</span></code>,
+should be either equal to <code class="docutils literal notranslate"><span class="pre">None</span></code> or <code class="docutils literal notranslate"><span class="pre">1.0</span></code> as AUC ROC partial
+computation currently is not supported for multiclass.</p></li>
+<li><p><strong>multi_class</strong> (<em>{'raise'</em><em>, </em><em>'ovr'</em><em>, </em><em>'ovo'}</em><em>, </em><em>default='raise'</em>) – <p>Multiclass only. Determines the type of configuration to use. The
+default value raises an error, so either <code class="docutils literal notranslate"><span class="pre">'ovr'</span></code> or <code class="docutils literal notranslate"><span class="pre">'ovo'</span></code> must be
+passed explicitly.</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">'ovr'</span></code>:</dt><dd><p>Computes the AUC of each class against the rest <a class="footnote-reference brackets" href="#id8" id="id3">3</a> <a class="footnote-reference brackets" href="#id9" id="id4">4</a>. This
+treats the multiclass case in the same way as the multilabel case.
+Sensitive to class imbalance even when <code class="docutils literal notranslate"><span class="pre">average</span> <span class="pre">==</span> <span class="pre">'macro'</span></code>,
+because class imbalance affects the composition of each of the
+‘rest’ groupings.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">'ovo'</span></code>:</dt><dd><p>Computes the average AUC of all possible pairwise combinations of
+classes <a class="footnote-reference brackets" href="#id10" id="id5">5</a>. Insensitive to class imbalance when
+<code class="docutils literal notranslate"><span class="pre">average</span> <span class="pre">==</span> <span class="pre">'macro'</span></code>.</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>labels</strong> (<em>array-like of shape</em><em> (</em><em>n_classes</em><em>,</em><em>)</em><em>, </em><em>default=None</em>) – Multiclass only. List of labels that index the classes in <code class="docutils literal notranslate"><span class="pre">y_score</span></code>.
+If <code class="docutils literal notranslate"><span class="pre">None</span></code>, the numerical or lexicographical order of the labels in
+<code class="docutils literal notranslate"><span class="pre">y_true</span></code> is used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><strong>auc</strong></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+<p class="rubric">References</p>
+<dl class="footnote brackets">
+<dt class="label" id="id6"><span class="brackets">1</span></dt>
+<dd><p><a class="reference external" href="https://en.wikipedia.org/wiki/Receiver_operating_characteristic">Wikipedia entry for the Receiver operating characteristic</a></p>
+</dd>
+<dt class="label" id="id7"><span class="brackets"><a class="fn-backref" href="#id2">2</a></span></dt>
+<dd><p><a class="reference external" href="https://www.ncbi.nlm.nih.gov/pubmed/2668680">Analyzing a portion of the ROC curve. McClish, 1989</a></p>
+</dd>
+<dt class="label" id="id8"><span class="brackets"><a class="fn-backref" href="#id3">3</a></span></dt>
+<dd><p>Provost, F., Domingos, P. (2000). Well-trained PETs: Improving
+probability estimation trees (Section 6.2), CeDER Working Paper
+#IS-00-04, Stern School of Business, New York University.</p>
+</dd>
+<dt class="label" id="id9"><span class="brackets"><a class="fn-backref" href="#id4">4</a></span></dt>
+<dd><p><a class="reference external" href="https://www.sciencedirect.com/science/article/pii/S016786550500303X">Fawcett, T. (2006). An introduction to ROC analysis. Pattern
+Recognition Letters, 27(8), 861-874.</a></p>
+</dd>
+<dt class="label" id="id10"><span class="brackets"><a class="fn-backref" href="#id5">5</a></span></dt>
+<dd><p><a class="reference external" href="http://link.springer.com/article/10.1023/A:1010920819831">Hand, D.J., Till, R.J. (2001). A Simple Generalisation of the Area
+Under the ROC Curve for Multiple Class Classification Problems.
+Machine Learning, 45(2), 171-186.</a></p>
+</dd>
+</dl>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">average_precision_score</span></code></dt><dd><p>Area under the precision-recall curve</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">roc_curve</span></code></dt><dd><p>Compute Receiver operating characteristic (ROC) curve</p>
+</dd>
+</dl>
+</div>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">sklearn.metrics</span> <span class="kn">import</span> <span class="n">roc_auc_score</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_scores</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.35</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">roc_auc_score</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="n">y_scores</span><span class="p">)</span>
+<span class="go">0.75</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="utils.roc_auc_score_multiclass">
+<code class="sig-prename descclassname">utils.</code><code class="sig-name descname">roc_auc_score_multiclass</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">actual_class</span></em>, <em class="sig-param"><span class="n">pred_class</span></em>, <em class="sig-param"><span class="n">average</span><span class="o">=</span><span class="default_value">'macro'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.roc_auc_score_multiclass" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the average roc auc scores over the classes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>actual_class</strong> (<em>array-like</em>) – Acutal class</p></li>
+<li><p><strong>pred_class</strong> (<em>array-like</em>) – Prediction class</p></li>
+<li><p><strong>average</strong> (<em>str</em><em>, </em><em>optional</em>) – Parameter for average calculation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Average of the differenct classes’ ROC AUC scores</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="utils.set_seed">
+<code class="sig-prename descclassname">utils.</code><code class="sig-name descname">set_seed</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seed</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.set_seed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use this to set ALL the random seeds to a fixed value
+and take out any randomness from cuda kernels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>seed</strong> (<em>int</em>) – Seed for the random generators</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Indicator whether the seed setting was successful</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="utils.sweep_wandb">
+<code class="sig-prename descclassname">utils.</code><code class="sig-name descname">sweep_wandb</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seed</span></em>, <em class="sig-param"><span class="n">device</span></em>, <em class="sig-param"><span class="n">trainset</span></em>, <em class="sig-param"><span class="n">validset</span></em>, <em class="sig-param"><span class="n">sweep_config</span></em>, <em class="sig-param"><span class="n">default_hyperparameters</span></em>, <em class="sig-param"><span class="n">count</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">entity</span><span class="o">=</span><span class="default_value">'4-2-convolution'</span></em>, <em class="sig-param"><span class="n">project</span><span class="o">=</span><span class="default_value">'resnet'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.sweep_wandb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use this to run a WandB grid search and store the parameters, plots and
+outputs to the project file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seed</strong> (<em>int</em>) – seed for the random generators to allow repeatability</p></li>
+<li><p><strong>device</strong> (<em>str</em>) – send data/tasks to GPU or CPU</p></li>
+<li><p><strong>trainset</strong> (<em>torch.utils.data.dataset.Subset</em>) – training dataset</p></li>
+<li><p><strong>validset</strong> (<em>torch.utils.data.dataset.Subset</em>) – validation dataset</p></li>
+<li><p><strong>sweep_config</strong> (<em>dict</em>) – grid search settings</p></li>
+<li><p><strong>default_hyperparameters</strong> (<em>dict</em>) – parameters we can vary during a grid search</p></li>
+<li><p><strong>count</strong> (<em>int</em>) – <dl class="simple">
+<dt>number of runs to execute, most important for a bayes sweep</dt><dd><p>For safety set at minimum number of grid search parameters
+if not used with bayes sweep</p>
+</dd>
+</dl>
+</p></li>
+<li><p><strong>entity</strong> (<em>str</em>) – wandb team under wihch this project belongs</p></li>
+<li><p><strong>project</strong> (<em>str</em>) – project folder within which parameters and outputs will be stored</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>displayed log loss and roc auc score plots and values</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="utils.train">
+<code class="sig-prename descclassname">utils.</code><code class="sig-name descname">train</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">optimizer</span></em>, <em class="sig-param"><span class="n">criterion</span></em>, <em class="sig-param"><span class="n">data_loader</span></em>, <em class="sig-param"><span class="n">channels</span></em>, <em class="sig-param"><span class="n">device</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Train the given model with the given parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>torchvision.models</em>) – </p></li>
+<li><p><strong>optimizer</strong> (<em>torch.optim.type.given_type</em>) – </p></li>
+<li><p><strong>criterion</strong> (<em>torch.nn.modules.loss</em>) – </p></li>
+<li><p><strong>data_loader</strong> (<em>torch.utils.data.dataloader.DataLoader</em>) – </p></li>
+<li><p><strong>channels</strong> (<em>int</em>) – </p></li>
+<li><p><strong>device</strong> (<em>str</em>) – send data/tasks to GPU or CPU</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Tuple containing the normalised roc auc score and loss</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="utils.train_model">
+<code class="sig-prename descclassname">utils.</code><code class="sig-name descname">train_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">optimizer</span></em>, <em class="sig-param"><span class="n">criterion</span></em>, <em class="sig-param"><span class="n">train_loader</span></em>, <em class="sig-param"><span class="n">validation_loader</span></em>, <em class="sig-param"><span class="n">channels</span></em>, <em class="sig-param"><span class="n">device</span></em>, <em class="sig-param"><span class="n">lr</span></em>, <em class="sig-param"><span class="n">momentum</span></em>, <em class="sig-param"><span class="n">batch_size</span></em>, <em class="sig-param"><span class="n">test_batch_size</span></em>, <em class="sig-param"><span class="n">n_epochs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.train_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Train model with validation set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>torchvision.models</em>) – </p></li>
+<li><p><strong>optimizer</strong> (<em>torch.optim.type.given_type</em>) – </p></li>
+<li><p><strong>criterion</strong> (<em>torch.nn.modules.loss</em>) – </p></li>
+<li><p><strong>train_loader</strong> (<em>torch.utils.data.dataloader.DataLoader</em>) – </p></li>
+<li><p><strong>validation_loader</strong> (<em>torch.utils.data.dataloader.DataLoader</em>) – </p></li>
+<li><p><strong>channels</strong> (<em>int</em>) – </p></li>
+<li><p><strong>device</strong> (<em>str</em>) – send data/tasks to GPU or CPU</p></li>
+<li><p><strong>lr</strong> (<em>float</em>) – </p></li>
+<li><p><strong>momentum</strong> (<em>int</em>) – </p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – </p></li>
+<li><p><strong>test_batch_size</strong> (<em>int</em>) – </p></li>
+<li><p><strong>n_epoch</strong> (<em>int</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Trained model</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>torchvision.models</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="utils.train_model_wandb">
+<code class="sig-prename descclassname">utils.</code><code class="sig-name descname">train_model_wandb</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">optimizer</span></em>, <em class="sig-param"><span class="n">criterion</span></em>, <em class="sig-param"><span class="n">train_loader</span></em>, <em class="sig-param"><span class="n">validation_loader</span></em>, <em class="sig-param"><span class="n">channels</span></em>, <em class="sig-param"><span class="n">device</span></em>, <em class="sig-param"><span class="n">lr</span></em>, <em class="sig-param"><span class="n">momentum</span></em>, <em class="sig-param"><span class="n">batch_size</span></em>, <em class="sig-param"><span class="n">test_batch_size</span></em>, <em class="sig-param"><span class="n">n_epochs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.train_model_wandb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Train model with validation set with wandb logging.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>torchvision.models</em>) – </p></li>
+<li><p><strong>optimizer</strong> (<em>torch.optim.type.given_type</em>) – </p></li>
+<li><p><strong>criterion</strong> (<em>torch.nn.modules.loss</em>) – </p></li>
+<li><p><strong>train_loader</strong> (<em>torch.utils.data.dataloader.DataLoader</em>) – </p></li>
+<li><p><strong>validation_loader</strong> (<em>torch.utils.data.dataloader.DataLoader</em>) – </p></li>
+<li><p><strong>channels</strong> (<em>int</em>) – </p></li>
+<li><p><strong>device</strong> (<em>str</em>) – send data/tasks to GPU or CPU</p></li>
+<li><p><strong>lr</strong> (<em>float</em>) – </p></li>
+<li><p><strong>momentum</strong> (<em>int</em>) – </p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – </p></li>
+<li><p><strong>test_batch_size</strong> (<em>int</em>) – </p></li>
+<li><p><strong>n_epoch</strong> (<em>int</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>torchvision.models</em></p></li>
+<li><p><em>Trained model</em></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="utils.train_on_full">
+<code class="sig-prename descclassname">utils.</code><code class="sig-name descname">train_on_full</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">optimizer</span></em>, <em class="sig-param"><span class="n">criterion</span></em>, <em class="sig-param"><span class="n">train_loader</span></em>, <em class="sig-param"><span class="n">channels</span></em>, <em class="sig-param"><span class="n">device</span></em>, <em class="sig-param"><span class="n">lr</span></em>, <em class="sig-param"><span class="n">momentum</span></em>, <em class="sig-param"><span class="n">batch_size</span></em>, <em class="sig-param"><span class="n">test_batch_size</span></em>, <em class="sig-param"><span class="n">n_epochs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.train_on_full" title="Permalink to this definition">¶</a></dt>
+<dd><p>Train model without validation set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>torchvision.models</em>) – </p></li>
+<li><p><strong>optimizer</strong> (<em>torch.optim.type.given_type</em>) – </p></li>
+<li><p><strong>criterion</strong> (<em>torch.nn.modules.loss</em>) – </p></li>
+<li><p><strong>train_loader</strong> (<em>torch.utils.data.dataloader.DataLoader</em>) – </p></li>
+<li><p><strong>validation_loader</strong> (<em>torch.utils.data.dataloader.DataLoader</em>) – </p></li>
+<li><p><strong>channels</strong> (<em>int</em>) – </p></li>
+<li><p><strong>device</strong> (<em>str</em>) – send data/tasks to GPU or CPU</p></li>
+<li><p><strong>lr</strong> (<em>float</em>) – </p></li>
+<li><p><strong>momentum</strong> (<em>int</em>) – </p></li>
+<li><p><strong>batch_size</strong> (<em>int</em>) – </p></li>
+<li><p><strong>test_batch_size</strong> (<em>int</em>) – </p></li>
+<li><p><strong>n_epoch</strong> (<em>int</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Trained model</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>torchvision.models</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="utils.train_wandb">
+<code class="sig-prename descclassname">utils.</code><code class="sig-name descname">train_wandb</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seed</span></em>, <em class="sig-param"><span class="n">device</span></em>, <em class="sig-param"><span class="n">trainset</span></em>, <em class="sig-param"><span class="n">validset</span></em>, <em class="sig-param"><span class="n">hyperparameters</span></em>, <em class="sig-param"><span class="n">entity</span><span class="o">=</span><span class="default_value">'4-2-convolution'</span></em>, <em class="sig-param"><span class="n">project</span><span class="o">=</span><span class="default_value">'resnet'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.train_wandb" title="Permalink to this definition">¶</a></dt>
+<dd><p>wandb training setup. Calls training function and
+varies hyperparameters for grid search</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seed</strong> (<em>int</em>) – seed for the random generators to allow repeatability</p></li>
+<li><p><strong>device</strong> (<em>str</em>) – send data/tasks to GPU or CPU</p></li>
+<li><p><strong>trainset</strong> (<em>torch.utils.data.dataset.Subset</em>) – training dataset</p></li>
+<li><p><strong>validset</strong> (<em>torch.utils.data.dataset.Subset</em>) – validation dataset</p></li>
+<li><p><strong>hyperparameters</strong> (<em>dict</em>) – parameters we can vary during a grid search</p></li>
+<li><p><strong>entity</strong> (<em>str</em>) – wandb team under wihch this project belongs</p></li>
+<li><p><strong>project</strong> (<em>str</em>) – project folder within which parameters and outputs will be stored</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Parameters, plots and data sent to wandb website</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="utils.validate">
+<code class="sig-prename descclassname">utils.</code><code class="sig-name descname">validate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">criterion</span></em>, <em class="sig-param"><span class="n">data_loader</span></em>, <em class="sig-param"><span class="n">channels</span></em>, <em class="sig-param"><span class="n">device</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.validate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate the given model with the given parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<em>torchvision.models</em>) – </p></li>
+<li><p><strong>criterion</strong> (<em>torch.nn.modules.loss</em>) – </p></li>
+<li><p><strong>data_loader</strong> (<em>torch.utils.data.dataloader.DataLoader</em>) – </p></li>
+<li><p><strong>channels</strong> (<em>int</em>) – </p></li>
+<li><p><strong>device</strong> (<em>str</em>) – send data/tasks to GPU or CPU</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Tuple containing the normalised roc auc score and loss</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="utils.visualise_rand">
+<code class="sig-prename descclassname">utils.</code><code class="sig-name descname">visualise_rand</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">42</span></em>, <em class="sig-param"><span class="n">n</span><span class="o">=</span><span class="default_value">3</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.visualise_rand" title="Permalink to this definition">¶</a></dt>
+<dd><p>Visualise a set of our images to see if images imported correctly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>torchvision.datasets.folder.ImageFolder</em>) – Data to visualise</p></li>
+<li><p><strong>seed</strong> (<em>int</em><em>, </em><em>optinional</em>) – Seed for the random generator.</p></li>
+<li><p><strong>n</strong> (<em>int</em><em>, </em><em>optional</em>) – Number of image in a row</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The result is plotted and not stored</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="utils.write_file">
+<code class="sig-prename descclassname">utils.</code><code class="sig-name descname">write_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">y_preds</span></em><span class="sig-paren">)</span><a class="headerlink" href="#utils.write_file" title="Permalink to this definition">¶</a></dt>
+<dd><p>Savings our test data results to a .csv in the submission_csv folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>y_preds</strong> (<em>list</em>) – Containing predictions to write</p></li>
+<li><p><strong>name</strong> (<em>filename</em>) – filename + output format (e.g. .csv , .txt)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The output is written to a file</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">X-Ray Classification - Covid detection</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 3.4.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

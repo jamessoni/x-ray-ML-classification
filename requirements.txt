@@ -1,0 +1,9 @@
+kaggle
+livelossplot
+matplotlib
+numpy
+scikit-learn
+sphinx
+torch
+torchvision
+wandb

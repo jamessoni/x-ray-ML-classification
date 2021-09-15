@@ -1,0 +1,13 @@
+# To ignore:
+.*
+*.ipynb_checkpoints
+*.zip
+*pycache*
+acse4-ml-2020/
+saved_models/
+wandb/
+xray-data/
+
+# Exceptions to the above:
+!.github/
+!.gitignore
